@@ -98,4 +98,38 @@ describe('white-horse-logger', function () {
     });
   });
 
+  it('should log according to config and use the default $$console', function (done) {
+    var container = new WhiteHorse(require);
+    container.use('../index.js');
+    container.use('white-horse-config');
+    var messages = [];
+    var transport = {
+      log: function (message) {
+        messages.push(message);
+      }
+    };
+    container.register('$$console', transport);
+    container.register('a', function ($logger) {
+      $logger.debug("UNO");
+      $logger.info("DOS");
+      $logger.warn("TRES");
+    });
+    container.register('b', function ($logger) {
+      $logger.debug("UNO");
+      $logger.info("DOS");
+      $logger.warn("TRES");
+    });
+    container.get('a', function (err) {
+      assert(!err);
+      container.get('b', function (err) {
+        assert(!err);
+        assert.equal(messages.length, 3);
+        assert(/^WARN +[0-9\-]+T[0-9:\.]+Z +\[a\] +TRES$/.test(messages[0]));
+        assert(/^INFO +[0-9\-]+T[0-9:\.]+Z +\[b\] +DOS$/.test(messages[1]));
+        assert(/^WARN +[0-9\-]+T[0-9:\.]+Z +\[b\] +TRES$/.test(messages[2]));
+        done();
+      });
+    });
+  });
+
 });
