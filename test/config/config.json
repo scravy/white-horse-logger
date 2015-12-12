@@ -1,0 +1,6 @@
+{
+	"logging": {
+		"a": "warn",
+		"b": "info"
+	}
+}

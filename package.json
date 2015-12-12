@@ -28,6 +28,7 @@
     "gulp-jshint": "^2.0.0",
     "gulp-mocha": "^2.2.0",
     "jshint": "^2.8.0",
-    "white-horse": "^2.0.0"
+    "white-horse": "^2.0.0",
+    "white-horse-config": "^1.0.0"
   }
 }

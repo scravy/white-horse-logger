@@ -25,12 +25,12 @@ function mkLogger(module, level, transport) {
 
 function getLogger(module, config, transport) {
 
-  var targetLevel = config[module] || logLevel.info;
+  var targetLevel = config[module] || 'info';
   
   var logger = {};
   
   Object.keys(logLevel).forEach(function (level) {
-    if (logLevel[level] >= targetLevel) {
+    if (logLevel[level] >= logLevel[targetLevel]) {
       logger[level] = mkLogger(module, level, transport);
     } else {
       logger[level] = function () {};
