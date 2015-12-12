@@ -11,11 +11,11 @@ var logLevel = {
   fatal: 6
 };
 
-function mkLogger(level, transport) {
+function mkLogger(module, level, transport) {
   return function () {
     var args = [].slice.call(arguments);
     var format = '%-5s %s %-15s ' + args.shift();
-    args.unshift(module);
+    args.unshift('[' + module + ']');
     args.unshift(new Date().toISOString());
     args.unshift(level.toUpperCase());
     args.unshift(format);
@@ -31,7 +31,7 @@ function getLogger(module, config, transport) {
   
   Object.keys(logLevel).forEach(function (level) {
     if (logLevel[level] >= targetLevel) {
-      logger[level] = mkLogger(level, transport);
+      logger[level] = mkLogger(module, level, transport);
     } else {
       logger[level] = function () {};
     }
