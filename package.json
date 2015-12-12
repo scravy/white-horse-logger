@@ -1,0 +1,33 @@
+{
+  "name": "white-horse-logger",
+  "version": "1.0.0",
+  "description": "$config service for white-horse modules.",
+  "main": "index.js",
+  "scripts": {
+    "test": "gulp check"
+  },
+  "keywords": [
+    "config",
+    "di",
+    "dependency-injection",
+    "dependency",
+    "injection",
+    "service",
+    "configuration"
+  ],
+  "author": "Julian Alexander Fleischer <julian@scravy.de>",
+  "license": "MIT",
+  "dependencies": {
+    "sprintf": "^0.1.5"
+  },
+  "devDependencies": {
+    "chalk": "^1.1.1",
+    "gulp": "^3.9.0",
+    "gulp-istanbul": "^0.10.3",
+    "gulp-istanbul-enforcer": "^1.0.3",
+    "gulp-jshint": "^2.0.0",
+    "gulp-mocha": "^2.2.0",
+    "jshint": "^2.8.0",
+    "white-horse": "^2.0.0"
+  }
+}
