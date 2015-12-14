@@ -98,7 +98,7 @@ describe('white-horse-logger', function () {
     });
   });
 
-  it('should log according to config and use the default $$console', function (done) {
+  it('should use the default $$console', function (done) {
     var container = new WhiteHorse(require);
     container.use('../index.js');
     var messages = [];
