@@ -15,10 +15,9 @@
     "service",
     "configuration"
   ],
-  "author": "Julian Alexander Fleischer <julian@scravy.de>",
+  "author": "Julian Alexander Fleischer <tirednesscankill@warhog.net>",
   "license": "MIT",
   "dependencies": {
-    "sprintf": "^0.1.5",
     "sprintf-js": "^1.0.3"
   },
   "devDependencies": {

@@ -1,3 +1,4 @@
+/* vim: set et sw=2 ts=2: */
 'use strict';
 
 var vsprintf = require('sprintf-js').vsprintf;
@@ -31,9 +32,7 @@ function mkLogger(container, module, done) {
     format = container.$logger$config[module].format;
   } else {
     format = container.$logger$config.$root.format;
-  }
-  
-  // console.log(container.$logger$config);
+  } 
   
   var logger = {};
   Object.keys(container.$logger$logLevels).forEach(function (level) {
