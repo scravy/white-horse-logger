@@ -1,6 +1,6 @@
 'use strict';
 
-var sprintf = require('sprintf').sprintf;
+var sprintf = require('sprintf-js').sprintf;
 
 var defaultLogLevels = {
   trace: 1,
@@ -40,12 +40,15 @@ function mkLogger(container, module, done) {
     logger[level] = container.$logger$logLevels[level] < target ?
       function () {} : function () {
         var args = [].slice.call(arguments);
-        var myFormat = format.replace('{}', args.shift());
-        args.unshift('[' + module + ']');
-        args.unshift(new Date().toISOString());
-        args.unshift(level.toUpperCase());
-        args.unshift(myFormat);
-        var message = sprintf.apply(null, args);
+        var string = args.join(' ');
+        var formatArgs = [
+          format,
+          level.toUpperCase(),
+          new Date().toISOString(),
+          module,
+          string
+        ];
+        var message = sprintf.apply(null, formatArgs);
         container.$logger$transport(message);
       };
   });
@@ -106,8 +109,8 @@ module.exports.$modules = {
                 if (!container.$logger$config.$root) {
                   container.$logger$config.$root = {};
                 }
-                if (!container.$logger$config.$root.$format) {
-                  container.$logger$config.$root.format = '%-5s %s %-15s {}';
+                if (!container.$logger$config.$root.format) {
+                  container.$logger$config.$root.format = '%-5s %s [%s] %s';
                 }
                 
                 container.$logger$transport = typeof $loggerTransport === 'function' ?
