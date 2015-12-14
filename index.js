@@ -1,6 +1,6 @@
 'use strict';
 
-var sprintf = require('sprintf-js').sprintf;
+var vsprintf = require('sprintf-js').vsprintf;
 
 var defaultLogLevels = {
   trace: 1,
@@ -40,15 +40,12 @@ function mkLogger(container, module, done) {
     logger[level] = container.$logger$logLevels[level] < target ?
       function () {} : function () {
         var args = [].slice.call(arguments);
-        var string = args.join(' ');
-        var formatArgs = [
-          format,
+        var message = vsprintf(format, [
           level.toUpperCase(),
           new Date().toISOString(),
           module,
-          string
-        ];
-        var message = sprintf.apply(null, formatArgs);
+          args.join(' ')
+        ]);
         container.$logger$transport(message);
       };
   });
