@@ -1,0 +1,151 @@
+/* vim: set et sw=2 ts=2: */
+
+describe('white-horse-logger', function () {
+  'use strict';
+
+  var assert = require('assert');
+  var WhiteHorse = require('white-horse');
+  var path = require('path');
+
+  it('should be picked up by the container', function () {
+    var container = new WhiteHorse(require);
+    container.use('../index.js');
+    assert(container.getModule('$logger') instanceof WhiteHorse.Module);
+  });
+
+  it('should inject a logger', function (done) {
+    var container = new WhiteHorse(require);
+    container.use('../index.js');
+    container.inject(function ($logger) {
+      assert($logger.trace);
+      assert($logger.debug);
+      assert($logger.info);
+      assert($logger.warn);
+      assert($logger.error);
+      assert($logger.fatal);
+      done();
+    });
+  });
+  
+  it('should pickup a transport from registered modules', function (done) {
+    var container = new WhiteHorse(require);
+    container.use('../index.js');
+    var messages = [];
+    var transport = function (message) {
+      messages.push(message);
+    };
+    transport.$factory = false;
+    container.register('$loggerTransport', transport);
+    container.inject(function ($logger) {
+      $logger.info("woop");
+    }, function () {
+      assert.equal(messages.length, 1, 'there should be one message');
+      assert(/^INFO +[0-9\-]+T[0-9:\.]+Z +\[\$root\] +woop$/.test(messages[0]), 'should be INFO in $root');
+      done();
+    });
+  });
+
+  it('should inject the right logger into the right module', function (done) {
+    var container = new WhiteHorse(require);
+    container.use('../index.js');
+    var messages = [];
+    var transport = function (message) {
+      messages.push(message);
+    };
+    transport.$factory = false;
+    container.register('$loggerTransport', transport);
+    container.register('something', function ($logger) {
+      $logger.warn('yea');
+    });
+    container.get('something', function (err, result) {
+      assert(!err);
+      assert.equal(messages.length, 1);
+      assert(/^WARN +[0-9\-]+T[0-9:\.]+Z +\[something\] +yea$/.test(messages[0]));
+      done();
+    });
+  });
+  
+  it('should log according to config', function (done) {
+    var container = new WhiteHorse(require);
+    container.use('../index.js');
+    container.use('white-horse-config');
+    var messages = [];
+    var transport = function (message) {
+      messages.push(message);
+    };
+    transport.$factory = false;
+    container.register('$loggerTransport', transport);
+    container.register('a', function ($logger) {
+      $logger.debug("UNO");
+      $logger.info("DOS");
+      $logger.warn("TRES");
+    });
+    container.register('b', function ($logger) {
+      $logger.debug("UNO");
+      $logger.info("DOS");
+      $logger.warn("TRES");
+    });
+    container.get('a', function (err) {
+      assert(!err);
+      container.get('b', function (err) {
+        assert(!err);
+        assert.equal(messages.length, 3);
+        assert(/^WARN +[0-9\-]+T[0-9:\.]+Z +\[a\] +TRES$/.test(messages[0]));
+        assert(/^INFO +[0-9\-]+T[0-9:\.]+Z +\[b\] +DOS$/.test(messages[1]));
+        assert(/^WARN +[0-9\-]+T[0-9:\.]+Z +\[b\] +TRES$/.test(messages[2]));
+        done();
+      });
+    });
+  });
+
+  it('should log according to config and use the default $$console', function (done) {
+    var container = new WhiteHorse(require);
+    container.use('../index.js');
+    var messages = [];
+    var mockConsole = {
+      log: function (message) {
+        messages.push(message);
+      }
+    };
+    container.register('$$console', mockConsole);
+    container.register('a', function ($logger) {
+      $logger.debug("UNO");
+      $logger.info("DOS");
+      $logger.warn("TRES");
+    });
+    container.get('a', function (err) {
+      assert.equal(err, null);
+      assert.equal(messages.length, 3);
+      assert(/^DEBUG +[0-9\-]+T[0-9:\.]+Z +\[a\] +UNO/.test(messages[0]));
+      assert(/^INFO +[0-9\-]+T[0-9:\.]+Z +\[a\] +DOS$/.test(messages[1]));
+      assert(/^WARN +[0-9\-]+T[0-9:\.]+Z +\[a\] +TRES$/.test(messages[2]));
+      done();
+    });
+  });
+
+  it('should log according to $loggerConfig', function (done) {
+    var container = new WhiteHorse(require);
+    container.use('../index.js');
+    var messages = [];
+    function transport(message) {
+      messages.push(message);
+    }
+    transport.$factory = false;
+    container.register('$loggerTransport', transport);
+    container.register('$loggerConfig', {
+      $root: 'warn'
+    });
+    container.register('a', function ($logger) {
+      $logger.debug("one");
+      $logger.info("two");
+      $logger.warn("three");
+    });
+    container.get('a', function (err) {
+      assert.equal(err, null);
+      assert.equal(messages.length, 1);
+      assert(/^WARN +[0-9\-]+T[0-9:\.]+Z +\[a\] +three/.test(messages[0]));
+      done();
+    });
+  });
+
+});
