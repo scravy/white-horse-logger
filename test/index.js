@@ -164,6 +164,37 @@ describe('white-horse-logger', function () {
     });
   });
   
+  it('should log custom levels with a simply configured $root logger and custom format', function (done) {
+    var container = new WhiteHorse(require);
+    container.use('../index.js');
+    var messages = [];
+    var transport = function (message) {
+      messages.push(message);
+    };
+    transport.$factory = false;
+    container.register('$loggerTransport', transport);
+    container.register('$loggerLogLevels', {
+      nevermind: 2,
+      problem: 4,
+      issue: 6
+    });
+    container.register('$loggerConfig', {
+      $root: '%3$-10s %2$s %1$10s %3$s %4$s'
+    });
+    container.inject(function ($logger) {
+      $logger.nevermind("one");
+      $logger.problem("two");
+      $logger.issue("three");
+    }, function (err) {
+      assert.equal(err, null);
+      assert.equal(messages.length, 3, 'there should be three messages');
+      assert(/^\$root +[0-9\-]+T[0-9:\.]+Z +NEVERMIND +\$root +one$/.test(messages[0]));
+      assert(/^\$root +[0-9\-]+T[0-9:\.]+Z +PROBLEM +\$root +two$/.test(messages[1]));
+      assert(/^\$root +[0-9\-]+T[0-9:\.]+Z +ISSUE +\$root +three$/.test(messages[2]));
+      done();
+    });
+  });
+  
   it('should inject the right logger into the right module', function (done) {
     var container = new WhiteHorse(require);
     container.use('../index.js');
