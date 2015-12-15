@@ -235,11 +235,6 @@ describe('white-horse-logger', function () {
       $logger.info("DOS");
       $logger.warn("TRES");
     });
-    container.injectWith(function (config) {
-      console.log('CONFIG', config);
-    }, [ '$config' ], function (err, result) {
-      console.log('RESULT', JSON.stringify(err, null, 2), result);
-    }, 'logging');
     container.get('a', function (err) {
       assert.equal(err, null);
       container.get('b', function (err) {
