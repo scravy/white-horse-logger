@@ -1,7 +1,7 @@
 {
   "name": "white-horse-logger",
-  "version": "1.0.0",
-  "description": "$config service for white-horse modules.",
+  "version": "1.0.1",
+  "description": "$logger service for white-horse modules.",
   "main": "index.js",
   "scripts": {
     "test": "gulp check"

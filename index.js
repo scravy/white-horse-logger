@@ -1,7 +1,7 @@
 /* vim: set et sw=2 ts=2: */
 'use strict';
 
-var vsprintf = require('sprintf-js').vsprintf;
+//var vsprintf = require('sprintf-js').vsprintf;
 
 var defaultLogLevels = {
   trace: 1,
@@ -12,7 +12,7 @@ var defaultLogLevels = {
   fatal: 6
 };
 
-function mkLogger(container, module, done) {
+function mkLogger(vsprintf, container, module, done) {
   
   module = module || '$root';
   
@@ -75,7 +75,11 @@ function normalizeConfig(config, logLevels) {
 
 module.exports.$modules = {
   
-  $logger: function getLogger($module, $done) {
+  $$vsprintf: function () {
+    return require('sprintf-js').vsprintf;
+  },
+  
+  $logger: function getLogger($$vsprintf, $module, $done) {
     
     var container = this;
     
@@ -112,14 +116,14 @@ module.exports.$modules = {
                 container.$logger$transport = typeof $loggerTransport === 'function' ?
                   $loggerTransport : console.log;
                   
-                mkLogger(container, $module, $done);
+                mkLogger($$vsprintf, container, $module, $done);
               });
             });
           });
         });
       });
     } else {
-      mkLogger(container, $module, $done);
+      mkLogger($$vsprintf, container, $module, $done);
     }
   }
   
