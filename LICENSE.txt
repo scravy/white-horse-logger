@@ -1,13 +1,3 @@
-# white-horse-logger
-
-[![Build Status](https://travis-ci.org/scravy/white-horse-logger.svg?branch=master)](https://travis-ci.org/scravy/white-horse-logger)
-[![Dependencies](https://david-dm.org/scravy/white-horse-logger.svg)](https://david-dm.org/scravy/white-horse-logger#info=dependencies&view=table)
-[![Dependencies](https://david-dm.org/scravy/white-horse-logger/dev-status.svg)](https://david-dm.org/scravy/white-horse-logger#info=devDependencies&view=table)
-
-Gives you the `$logger` service for projects using [white-horse](https://github.com/scravy/white-horse) dependency injection.
-
-
-## License (MIT)
 
     Copyright (c) 2015 Julian Alexander Fleischer
 
@@ -34,4 +24,3 @@ Gives you the `$logger` service for projects using [white-horse](https://github.
     CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
     CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
     IN THE SOFTWARE.
-
