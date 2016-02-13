@@ -12,6 +12,19 @@ var defaultLogLevels = {
   fatal: 6
 };
 
+function printArg(arg) {
+  try {
+    if (typeof arg === 'object') {
+      if (typeof arg.inspect === 'function') {
+        return arg.inspect();
+      } else {
+        return JSON.stringify(arg, null, 2);
+      }
+    }
+  } catch (e) {}
+  return arg;
+}
+
 function mkLogger(vsprintf, container, module, done) {
   
   module = module || '$root';
@@ -38,7 +51,10 @@ function mkLogger(vsprintf, container, module, done) {
   Object.keys(container.$logger$logLevels).forEach(function (level) {
     logger[level] = container.$logger$logLevels[level] < target ?
       function () {} : function () {
-        var args = [].slice.call(arguments);
+        var args = [];
+        for (var i = 0; i < arguments.length; i += 1) {
+          args[i] = printArg(arguments[i]);
+        }
         var message = vsprintf(format, [
           level.toUpperCase(),
           new Date().toISOString(),
