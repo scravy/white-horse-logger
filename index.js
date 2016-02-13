@@ -126,7 +126,7 @@ module.exports.$modules = {
                     container.$logger$config.$root = {};
                   }
                   if (!container.$logger$config.$root.format) {
-                    container.$logger$config.$root.format = '%-5s %s [%s] %s';
+                    container.$logger$config.$root.format = '%-5s %s [%-15s] %s';
                   }
                     
                   container.$logger$transport = typeof $loggerTransport === 'function' ?

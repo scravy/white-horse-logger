@@ -40,7 +40,7 @@ describe('white-horse-logger', function () {
       $logger.info("woop");
     }, function () {
       assert.equal(messages.length, 1, 'there should be one message');
-      assert(/^INFO +[0-9\-]+T[0-9:\.]+Z +\[\$root\] +woop$/.test(messages[0]), 'should be INFO in $root');
+      assert(/^INFO +[0-9\-]+T[0-9:\.]+Z +\[ *\$root *\] +woop$/.test(messages[0]), 'should be INFO in $root');
       done();
     });
   });
@@ -63,12 +63,12 @@ describe('white-horse-logger', function () {
       $logger.fatal("six", 6);
     }, function () {
       assert.equal(messages.length, 6, 'there should be six messages');
-      assert(/^TRACE +[0-9\-]+T[0-9:\.]+Z +\[\$root\] +one 1$/.test(messages[0]));
-      assert(/^DEBUG +[0-9\-]+T[0-9:\.]+Z +\[\$root\] +two 2$/.test(messages[1]));
-      assert(/^INFO +[0-9\-]+T[0-9:\.]+Z +\[\$root\] +three 3$/.test(messages[2]));
-      assert(/^WARN +[0-9\-]+T[0-9:\.]+Z +\[\$root\] +four 4$/.test(messages[3]));
-      assert(/^ERROR +[0-9\-]+T[0-9:\.]+Z +\[\$root\] +five 5$/.test(messages[4]));
-      assert(/^FATAL +[0-9\-]+T[0-9:\.]+Z +\[\$root\] +six 6$/.test(messages[5]));
+      assert(/^TRACE +[0-9\-]+T[0-9:\.]+Z +\[ *\$root *\] +one 1$/.test(messages[0]));
+      assert(/^DEBUG +[0-9\-]+T[0-9:\.]+Z +\[ *\$root *\] +two 2$/.test(messages[1]));
+      assert(/^INFO +[0-9\-]+T[0-9:\.]+Z +\[ *\$root *\] +three 3$/.test(messages[2]));
+      assert(/^WARN +[0-9\-]+T[0-9:\.]+Z +\[ *\$root *\] +four 4$/.test(messages[3]));
+      assert(/^ERROR +[0-9\-]+T[0-9:\.]+Z +\[ *\$root *\] +five 5$/.test(messages[4]));
+      assert(/^FATAL +[0-9\-]+T[0-9:\.]+Z +\[ *\$root *\] +six 6$/.test(messages[5]));
       done();
     });
   });
@@ -93,9 +93,9 @@ describe('white-horse-logger', function () {
       $logger.issue("three", 3);
     }, function () {
       assert.equal(messages.length, 3, 'there should be three messages');
-      assert(/^NEVERMIND +[0-9\-]+T[0-9:\.]+Z +\[\$root\] +one 1$/.test(messages[0]));
-      assert(/^PROBLEM +[0-9\-]+T[0-9:\.]+Z +\[\$root\] +two 2$/.test(messages[1]));
-      assert(/^ISSUE +[0-9\-]+T[0-9:\.]+Z +\[\$root\] +three 3$/.test(messages[2]));
+      assert(/^NEVERMIND +[0-9\-]+T[0-9:\.]+Z +\[ *\$root *\] +one 1$/.test(messages[0]));
+      assert(/^PROBLEM +[0-9\-]+T[0-9:\.]+Z +\[ *\$root *\] +two 2$/.test(messages[1]));
+      assert(/^ISSUE +[0-9\-]+T[0-9:\.]+Z +\[ *\$root *\] +three 3$/.test(messages[2]));
       done();
     });
   });
@@ -125,8 +125,8 @@ describe('white-horse-logger', function () {
       $logger.issue("three", 3);
     }, function () {
       assert.equal(messages.length, 2, 'there should be two messages');
-      assert(/^PROBLEM +[0-9\-]+T[0-9:\.]+Z +\[\$root\] +two 2$/.test(messages[0]));
-      assert(/^ISSUE +[0-9\-]+T[0-9:\.]+Z +\[\$root\] +three 3$/.test(messages[1]));
+      assert(/^PROBLEM +[0-9\-]+T[0-9:\.]+Z +\[ *\$root *\] +two 2$/.test(messages[0]));
+      assert(/^ISSUE +[0-9\-]+T[0-9:\.]+Z +\[ *\$root *\] +three 3$/.test(messages[1]));
       done();
     });
   });
@@ -210,7 +210,7 @@ describe('white-horse-logger', function () {
     container.get('something', function (err, result) {
       assert(!err);
       assert.equal(messages.length, 1);
-      assert(/^WARN +[0-9\-]+T[0-9:\.]+Z +\[something\] +yea$/.test(messages[0]));
+      assert(/^WARN +[0-9\-]+T[0-9:\.]+Z +\[ *something *\] +yea$/.test(messages[0]));
       done();
     });
   });
@@ -240,9 +240,9 @@ describe('white-horse-logger', function () {
       container.get('b', function (err) {
         assert.equal(err, null);
         assert.equal(messages.length, 3);
-        assert(/^WARN +[0-9\-]+T[0-9:\.]+Z +\[a\] +TRES$/.test(messages[0]));
-        assert(/^INFO +[0-9\-]+T[0-9:\.]+Z +\[b\] +DOS$/.test(messages[1]));
-        assert(/^WARN +[0-9\-]+T[0-9:\.]+Z +\[b\] +TRES$/.test(messages[2]));
+        assert(/^WARN +[0-9\-]+T[0-9:\.]+Z +\[ *a *\] +TRES$/.test(messages[0]));
+        assert(/^INFO +[0-9\-]+T[0-9:\.]+Z +\[ *b *\] +DOS$/.test(messages[1]));
+        assert(/^WARN +[0-9\-]+T[0-9:\.]+Z +\[ *b *\] +TRES$/.test(messages[2]));
         done();
       });
     });
@@ -266,9 +266,9 @@ describe('white-horse-logger', function () {
     container.get('a', function (err) {
       assert.equal(err, null);
       assert.equal(messages.length, 3);
-      assert(/^DEBUG +[0-9\-]+T[0-9:\.]+Z +\[a\] +UNO/.test(messages[0]));
-      assert(/^INFO +[0-9\-]+T[0-9:\.]+Z +\[a\] +DOS$/.test(messages[1]));
-      assert(/^WARN +[0-9\-]+T[0-9:\.]+Z +\[a\] +TRES$/.test(messages[2]));
+      assert(/^DEBUG +[0-9\-]+T[0-9:\.]+Z +\[ *a *\] +UNO/.test(messages[0]));
+      assert(/^INFO +[0-9\-]+T[0-9:\.]+Z +\[ *a *\] +DOS$/.test(messages[1]));
+      assert(/^WARN +[0-9\-]+T[0-9:\.]+Z +\[ *a *\] +TRES$/.test(messages[2]));
       done();
     });
   });
@@ -293,7 +293,7 @@ describe('white-horse-logger', function () {
     container.get('a', function (err) {
       assert.equal(err, null);
       assert.equal(messages.length, 1);
-      assert(/^WARN +[0-9\-]+T[0-9:\.]+Z +\[a\] +three/.test(messages[0]));
+      assert(/^WARN +[0-9\-]+T[0-9:\.]+Z +\[ *a *\] +three/.test(messages[0]));
       done();
     });
   });
@@ -313,7 +313,7 @@ describe('white-horse-logger', function () {
     container.get('a', function (err) {
       assert.equal(err, null);
       assert.equal(messages.length, 1);
-      console.log(messages[0]);
+      assert(/^INFO +[0-9\-]+T[0-9:\.]+Z +\[ *a *\] +test \{ hello: .+ \}$/.test(messages[0]));
       done();
     });
   });
