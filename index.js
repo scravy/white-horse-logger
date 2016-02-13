@@ -12,24 +12,23 @@ var defaultLogLevels = {
   fatal: 6
 };
 
-function printArg(arg) {
-  try {
+function printArg(util) {
+  return function (arg) {
     if (typeof arg === 'object') {
-      if (typeof arg.inspect === 'function') {
-        return arg.inspect();
-      } else {
-        return JSON.stringify(arg, null, 2);
-      }
+      return util.inspect(arg, {
+        showHidden: true,
+        depth: 4,
+        colors: true,
+        customInspect: false
+      });
     }
-  } catch (e) {}
-  return arg;
+    return arg;
+  };
 }
 
 function mkLogger(vsprintf, container, module, done) {
   
   module = module || '$root';
-  
-  var config = container.$logger$config;
   
   var targetLevel = container.$logger$defaultTargetLevel;
   if (container.$logger$config[module] && container.$logger$config[module].level) {
@@ -53,7 +52,7 @@ function mkLogger(vsprintf, container, module, done) {
       function () {} : function () {
         var args = [];
         for (var i = 0; i < arguments.length; i += 1) {
-          args[i] = printArg(arguments[i]);
+          args[i] = container.$logger$inspect(arguments[i]);
         }
         var message = vsprintf(format, [
           level.toUpperCase(),
@@ -95,7 +94,7 @@ module.exports.$modules = {
     return require('sprintf-js').vsprintf;
   },
   
-  $logger: function getLogger($$vsprintf, $module, $done) {
+  $logger: function getLogger($$vsprintf, $$util, $module, $done) {
     
     var container = this;
     
@@ -103,36 +102,41 @@ module.exports.$modules = {
       container.get('$loggerConfig', function (_, $loggerConfig) {
         container.get('$loggerTransport', function (_, $loggerTransport) {
           container.get('$loggerLogLevels', function (_, $loggerLogLevels) {
-            container.get('$config', function (_, $config) {
-              container.get('$$console', function (_, console) {
-          
-                container.$logger$logLevels = typeof $loggerLogLevels === 'object' ?
+            container.get('$loggerInspect', function (_, $loggerInspect) {
+              container.get('$config', function (_, $config) {
+                container.get('$$console', function (_, console) {
+            
+                  container.$logger$logLevels = typeof $loggerLogLevels === 'object' ?
                   container.$logger$logLevels = $loggerLogLevels :
                   container.$logger$logLevels = defaultLogLevels;
-                
-                var defaultTargetLevel = Infinity;
-                Object.keys(container.$logger$logLevels).forEach(function (level) {
-                  defaultTargetLevel = Math.min(defaultTargetLevel, container.$logger$logLevels[level]);
+                    
+                  var defaultTargetLevel = Infinity;
+                  Object.keys(container.$logger$logLevels).forEach(function (level) {
+                    defaultTargetLevel = Math.min(defaultTargetLevel, container.$logger$logLevels[level]);
+                  });
+                  container.$logger$defaultTargetLevel = defaultTargetLevel;
+                    
+                  container.$logger$config = (typeof $loggerConfig === 'object' ? $loggerConfig : (
+                    ($config && typeof $config.get === 'function') ? $config.get('logging') : null
+                  )) || {};
+                    
+                  normalizeConfig(container.$logger$config, container.$logger$logLevels);
+                    
+                  if (!container.$logger$config.$root) {
+                    container.$logger$config.$root = {};
+                  }
+                  if (!container.$logger$config.$root.format) {
+                    container.$logger$config.$root.format = '%-5s %s [%s] %s';
+                  }
+                    
+                  container.$logger$transport = typeof $loggerTransport === 'function' ?
+                    $loggerTransport : console.log;
+                    
+                  container.$logger$inspect = typeof $loggerInspect === 'function' ?
+                    $loggerInspect : printArg($$util);
+                    
+                  mkLogger($$vsprintf, container, $module, $done);
                 });
-                container.$logger$defaultTargetLevel = defaultTargetLevel;
-                
-                container.$logger$config = (typeof $loggerConfig === 'object' ? $loggerConfig : (
-                  ($config && typeof $config.get === 'function') ? $config.get('logging') : null
-                )) || {};
-                
-                normalizeConfig(container.$logger$config, container.$logger$logLevels);
-                
-                if (!container.$logger$config.$root) {
-                  container.$logger$config.$root = {};
-                }
-                if (!container.$logger$config.$root.format) {
-                  container.$logger$config.$root.format = '%-5s %s [%s] %s';
-                }
-                
-                container.$logger$transport = typeof $loggerTransport === 'function' ?
-                  $loggerTransport : console.log;
-                  
-                mkLogger($$vsprintf, container, $module, $done);
               });
             });
           });

@@ -298,4 +298,23 @@ describe('white-horse-logger', function () {
     });
   });
 
+  it('should nicely log', function (done) {
+    var container = new WhiteHorse(require);
+    container.use('../index.js');
+    var messages = [];
+    function transport(message) {
+      messages.push(message);
+    }
+    transport.$factory = false;
+    container.register('$loggerTransport', transport);
+    container.register('a', function ($logger) {
+      $logger.info('test', { hello: 'world' });
+    });
+    container.get('a', function (err) {
+      assert.equal(err, null);
+      assert.equal(messages.length, 1);
+      console.log(messages[0]);
+      done();
+    });
+  });
 });

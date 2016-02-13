@@ -1,6 +1,6 @@
 {
   "name": "white-horse-logger",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "$logger service for white-horse modules.",
   "main": "index.js",
   "scripts": {
